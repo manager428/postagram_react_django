@@ -1,10 +1,15 @@
 import uuid
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser,    BaseUserManager, PermissionsMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.http import Http404
 
 # Create your models here.
+
+
+def user_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return "user_{0}/{1}".format(instance.public_id, filename)
 
 
 class UserManager(BaseUserManager):
@@ -30,9 +35,7 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, username, email, password, **kwargs):
-        """
-        Create and return a `User` with superuser (admin) permissions.
-        """
+        """ Create and return a `User` with superuser (admin) permissions."""
         if password is None:
             raise TypeError('Superusers must have a password.')
         if email is None:
@@ -47,15 +50,17 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    public_id = models.UUIDField(db_index=True, unique=True,
-                                 default=uuid.uuid4, editable=False)
-    username = models.CharField(db_index=True,
-                                max_length=255, unique=True)
+    public_id = models.UUIDField(
+        db_index=True, unique=True, default=uuid.uuid4, editable=False)
+    username = models.CharField(db_index=True, max_length=255, unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(db_index=True, unique=True)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
+    bio = models.TextField(null=True)
+    avatar = models.ImageField(
+        null=True, blank=True, upload_to=user_directory_path)
     created = models.DateTimeField(auto_now=True)
     updated = models.DateTimeField(auto_now_add=True)
     USERNAME_FIELD = 'email'
