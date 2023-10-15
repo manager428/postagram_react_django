@@ -69,3 +69,21 @@ class UserSerializer(AbstractSerializer):
 ```
 
 -AbstractViewSet
+`class UserViewSet(AbstractViewSet):`
+
+#### Writing the Post model
+
+-Pagination
+`settings.py` file
+
+```
+REST_FRAMEWORK = {
+…
+   'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+   'PAGE_SIZE': 15,
+}
+…
+```
+
+Basically here, all results are limited to 15 per page but we can also increase this size with the limit parameter when making a request and also use the offset parameter to precisely where we want the result to start from:
+`GET https://api.example.org/accounts/?limit=100&offset=400`

@@ -1,4 +1,4 @@
-from core.abstract.serializer import AbstractSerializer
+from core.abstract.serializers import AbstractSerializer
 from core.user.models import User
 
 
